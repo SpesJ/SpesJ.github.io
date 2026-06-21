@@ -1,22 +1,28 @@
 export const categories = [
   {
-    slug: 'tech',
-    label: '技术文章',
+    slug: 'machine-learning',
+    label: 'Machine Learning',
     subcategories: [
       { slug: 'cpp', label: 'C++' },
       { slug: 'linux', label: 'Linux' },
+      {slug: 'python', label: 'Python'},
     ],
   },
   {
-    slug: 'life',
-    label: '生活随笔',
+    slug: 'hot-topics',
+    label: 'Hot Topics',
     subcategories: [],
   },
   {
-    slug: 'notes',
-    label: '学习笔记',
+    slug: 'english-learning',
+    label: 'English Learning',
     subcategories: [
-      { slug: 'english', label: '英语' },
+      { slug: 'Grammar', label: 'ENGLISH GRAMMAR IN USE' },
     ],
+  },
+  {
+    slug: 'daily-life',
+    label: 'Daily Life',
+    subcategories: [],
   },
 ];
