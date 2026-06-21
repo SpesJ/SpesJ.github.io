@@ -2,18 +2,49 @@
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-const posts = (await getCollection('posts')).sort(
+const allPosts = await getCollection('posts');
+
+const sortedPosts = allPosts.sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
 );
 ---
-<Layout>
-  <h1>我的博客</h1>
-  <ul>
-    {posts.map((post) => (
+
+<Layout title="Spes's BLOG">
+  <h1>Spes's BLOG</h1>
+
+  <ul class="post-list">
+    {sortedPosts.map((post) => (
       <li>
         <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-        <span> — {post.data.pubDate.toLocaleDateString()}</span>
+        <span class="post-date">— {post.data.pubDate.toLocaleDateString()}</span>
       </li>
     ))}
   </ul>
 </Layout>
+
+<style>
+  .post-list {
+    list-style: none;
+    padding: 0;
+  }
+  .post-list li {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed #e0e0e0;
+    padding-bottom: 0.5rem;
+  }
+  .post-list a {
+    text-decoration: none;
+    color: #0076ff;
+    font-weight: 500;
+  }
+  .post-list a:hover {
+    text-decoration: underline;
+  }
+  .post-date {
+    color: #888;
+    font-size: 0.9rem;
+  }
+</style>

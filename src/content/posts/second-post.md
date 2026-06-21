@@ -1,7 +1,6 @@
 ---
-title: "This is second article"
-pubDate: 2026-06-21
+title: "Picture Test"
+pubDate: 2026-6-21
 draft: false
 ---
-
-Happing everyday!
+![演示截图](./demo.png)

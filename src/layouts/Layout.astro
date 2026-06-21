@@ -1,14 +1,19 @@
 ---
 import '../styles/global.css';
+
+const { title = '我的博客' } = Astro.props;
 ---
 <!doctype html>
 <html lang="zh-CN">
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width" />
-		<title>我的博客</title>
+		<title>{title}</title>
 	</head>
 	<body>
+		<header>
+			<a href="/" class="site-title">Spes's BLOG</a>
+		</header>
 		<slot />
 	</body>
 </html>
