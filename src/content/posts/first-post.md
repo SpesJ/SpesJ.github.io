@@ -2,7 +2,8 @@
 title: "我的第一篇 Astro 文章"
 pubDate: 2026-06-20
 draft: false
-category: "literact"
+category: "tech"
+subcategory: "cpp"
 tags: ["Astro","note"]
 ---
 

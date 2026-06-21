@@ -1,72 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
 import { getCollection } from 'astro:content';
 
 const allPosts = await getCollection('posts');
-
-const sortedPosts = allPosts.sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
-
 <Layout title="Spes's BLOG">
-  <h1>Spes's BLOG</h1>
-
-  <ul class="post-list">
+  <Sidebar slot="sidebar" />
+  <h2 class="text-3xl font-bold mb-8">最新文章</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {sortedPosts.map((post) => (
-      <li>
-        <a href={`/posts/${post.id}/`}>{post.data.title}</a>
-        <span class="post-date">— {post.data.pubDate.toLocaleDateString()}</span>
-        {post.data.category && <span class="post-category">{post.data.category}</span>}
-        {post.data.tags.length > 0 && (
-          <span class="post-tags">
-            {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
-          </span>
-        )}
-      </li>
+      <article class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 shadow-sm hover:shadow-md transition-shadow">
+        <a href={`/posts/${post.id}/`}>
+          <h3 class="text-2xl font-semibold hover:text-blue-600">{post.data.title}</h3>
+          <p class="text-sm text-zinc-500 mt-2">{post.data.pubDate.toLocaleDateString('zh-CN')}</p>
+        </a>
+      </article>
     ))}
-  </ul>
+  </div>
 </Layout>
-
-<style>
-  .post-list {
-    list-style: none;
-    padding: 0;
-  }
-  .post-list li {
-    margin-bottom: 1rem;
-    border-bottom: 1px dashed #e0e0e0;
-    padding-bottom: 0.5rem;
-  }
-  .post-list a {
-    text-decoration: none;
-    color: #0076ff;
-    font-weight: 500;
-  }
-  .post-list a:hover {
-    text-decoration: underline;
-  }
-  .post-date {
-    color: #888;
-    font-size: 0.9rem;
-  }
-  .post-category {
-    margin-left: 0.5rem;
-    background: #eef2ff;
-    color: #4338ca;
-    padding: 0.1rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-  }
-  .post-tags {
-    margin-left: 0.5rem;
-  }
-  .tag {
-    color: #888;
-    font-size: 0.8rem;
-    margin-right: 0.3rem;
-  }
-  .tag::before {
-    content: "#";
-  }
-</style>

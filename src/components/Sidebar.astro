@@ -1,0 +1,44 @@
+---
+import { categories } from '../data/categories';
+
+const currentPath = Astro.url.pathname;
+---
+<aside class="w-[220px] shrink-0 sticky top-12">
+  <div class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+    <a href="/" class="block text-lg font-bold text-zinc-900 dark:text-zinc-50 mb-8 tracking-tight">
+      Spes's BLOG
+    </a>
+
+    <h3 class="text-[11px] font-semibold text-zinc-400 uppercase tracking-[0.08em] mb-3 px-3">探索</h3>
+
+    <nav class="flex flex-col gap-1">
+      {categories.map((cat) => {
+        const catHref = `/category/${cat.slug}/`;
+        const isCatActive = currentPath.startsWith(catHref);
+        return (
+          <div>
+            <a href={catHref} class:list={["flex items-center px-3 py-2 rounded-xl text-sm transition-colors duration-150", isCatActive ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-semibold" : "text-zinc-600 dark:text-zinc-400 font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800"]}>
+              {cat.label}
+            </a>
+            {cat.subcategories.length > 0 && (
+              <div class="flex flex-col gap-0.5 mt-1 ml-3 pl-3 border-l border-zinc-200 dark:border-zinc-700">
+                {cat.subcategories.map((sub) => {
+                  const subHref = `${catHref}${sub.slug}/`;
+                  const isSubActive = currentPath === subHref;
+                  return (
+                    <a href={subHref} class:list={["px-3 py-1.5 rounded-lg text-[13px] transition-colors duration-150", isSubActive ? "bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 font-medium" : "text-zinc-500 dark:text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"]}>
+                      {sub.label}
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </nav>
+
+    <div class="h-px bg-zinc-100 dark:bg-zinc-800 my-6"></div>
+    <p class="text-[11px] text-zinc-400 px-3">© 2026 Spes.</p>
+  </div>
+</aside>

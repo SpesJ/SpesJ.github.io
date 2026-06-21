@@ -1,0 +1,39 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Sidebar from '../../../components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+import { categories } from '../../../data/categories';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  return categories.map((cat) => {
+    const posts = allPosts
+      .filter((p) => p.data.category === cat.slug)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    return {
+      params: { slug: cat.slug },
+      props: { label: cat.label, posts },
+    };
+  });
+}
+
+const { label, posts } = Astro.props;
+---
+<Layout title={label}>
+  <Sidebar slot="sidebar" />
+  <h2 class="text-3xl font-bold mb-8">{label}</h2>
+  {posts.length === 0 ? (
+    <p class="text-zinc-500">这个分类下还没有文章。</p>
+  ) : (
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {posts.map((post) => (
+        <article class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 shadow-sm hover:shadow-md transition-shadow">
+          <a href={`/posts/${post.id}/`}>
+            <h3 class="text-2xl font-semibold hover:text-blue-600">{post.data.title}</h3>
+            <p class="text-sm text-zinc-500 mt-2">{post.data.pubDate.toLocaleDateString('zh-CN')}</p>
+          </a>
+        </article>
+      ))}
+    </div>
+  )}
+</Layout>

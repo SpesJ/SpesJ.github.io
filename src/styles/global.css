@@ -1,68 +1,14 @@
+@import "tailwindcss";
+
 body {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
   font-family: system-ui, sans-serif;
   line-height: 1.6;
-  color: #222;
 }
 
-h1 {
-  font-size: 1.8rem;
-}
+/* 保留部分原有样式 */
+h1 { font-size: 1.8rem; }
 
-ul {
-  list-style: none;
-  padding: 0;
-}
-
-li {
-  margin-bottom: 1rem;
-}
-
-a {
-  color: #2563eb;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-span {
-  color: #888;
-  font-size: 0.9rem;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-}
-
-header {
-  margin-bottom: 2rem;
-}
-
-.site-title {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: #222;
-}
-
-article h2 {
-  margin-top: 1.5rem;
-}
-
-article p {
-  margin: 1rem 0;
-}
-
-.back-link {
-  display: inline-block;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-}
+ul { list-style: none; padding: 0; }
 
 .tag {
   display: inline-block;
@@ -73,8 +19,6 @@ article p {
   font-size: 0.8rem;
   margin-right: 0.4rem;
 }
-
 .tag::before {
   content: "#";
 }
-

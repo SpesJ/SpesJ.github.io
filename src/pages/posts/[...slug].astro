@@ -1,6 +1,6 @@
 ---
-// src/pages/posts/[...slug].astro
 import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Sidebar.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -15,83 +15,38 @@ const { post } = Astro.props;
 const { Content } = await render(post);
 ---
 <Layout title={post.data.title}>
-  
-  <article class="blog-post">
-    <header class="post-header">
-      <h1>{post.data.title}</h1>
-      <time>{post.data.pubDate.toLocaleDateString()}</time>
+  <Sidebar slot="sidebar" />
+
+  <a href="/" class="text-sm text-zinc-500 hover:text-blue-600 mb-6 inline-block">← 返回首页</a>
+
+  <article class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-10 shadow-sm">
+    <header class="text-center mb-8 pb-6 border-b border-zinc-100 dark:border-zinc-800">
+      <h1 class="text-3xl font-bold mb-2">{post.data.title}</h1>
+      <time class="text-sm text-zinc-400">{post.data.pubDate.toLocaleDateString('zh-CN')}</time>
       {(post.data.category || post.data.tags.length > 0) && (
-        <div class="post-meta">
-          {post.data.category && <span class="post-category">{post.data.category}</span>}
+        <div class="mt-3">
+          {post.data.category && <span class="inline-block mr-2 bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-xs">{post.data.category}</span>}
           {post.data.tags.length > 0 && (
-            <span class="post-tags">
+            <span>
               {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
             </span>
           )}
         </div>
       )}
     </header>
-    
+
     <div class="post-content">
       <Content />
     </div>
   </article>
-
 </Layout>
 
 <style>
-  /* 外部卡片样式 */
-  .blog-post {
-    background: #ffffff;
-    padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* 轻微的阴影让文章浮起来 */
-  }
-
-  .post-header {
-    text-align: center;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 1.5rem;
-  }
-
-  .post-header h1 {
-    font-size: 2.2rem;
-    color: #111;
-    margin-bottom: 0.5rem;
-  }
-
-  .post-header time {
-    color: #888;
-    font-size: 0.9rem;
-  }
-
-  .post-meta {
-    margin-top: 0.75rem;
-  }
-
-  .post-category {
-    display: inline-block;
-    margin-right: 0.5rem;
-    background: #eef2ff;
-    color: #4338ca;
-    padding: 0.1rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-  }
-  
-  /* ==========================================
-     Markdown 正文内容的样式（穿透作用域）
-     ========================================== */
-  
-  /* 给所有的段落加行高，看起来不那么挤 */
   .post-content :global(p) {
     line-height: 1.8;
     color: #444;
     margin-bottom: 1.2rem;
   }
-
-  /* 二级标题带下划线 */
   .post-content :global(h2) {
     color: #222;
     margin-top: 2rem;
@@ -99,8 +54,6 @@ const { Content } = await render(post);
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 0.5rem;
   }
-
-  /* 引用块（Markdown 里的 > ）的样式 */
   .post-content :global(blockquote) {
     border-left: 4px solid #007bff;
     background-color: #f8f9fa;
@@ -110,8 +63,6 @@ const { Content } = await render(post);
     font-style: italic;
     border-radius: 0 8px 8px 0;
   }
-
-  /* 行内代码（比如 `code`）变点颜色 */
   .post-content :global(code) {
     background-color: #f1f3f5;
     color: #e83e8c;
@@ -119,18 +70,14 @@ const { Content } = await render(post);
     border-radius: 4px;
     font-size: 0.9em;
   }
-
-  /* 代码块（```包裹的内容）变黑底白字 */
   .post-content :global(pre) {
     background-color: #282c34;
     color: #abb2bf;
     padding: 1.2rem;
     border-radius: 8px;
-    overflow-x: auto; /* 代码太长可以横向滚动 */
+    overflow-x: auto;
     margin: 1.5rem 0;
   }
-
-  /* 清除代码块内部 code 标签的背景色，防止和上面的行内代码冲突 */
   .post-content :global(pre code) {
     background-color: transparent;
     color: inherit;

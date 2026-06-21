@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts');
+  const categories = [...new Set(allPosts.map((p) => p.data.category).filter(Boolean))];
+
+  return categories.map((category) => {
+    const posts = allPosts
+      .filter((p) => p.data.category === category)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+    return {
+      params: { category },
+      props: { category, posts },
+    };
+  });
+}
+
+const { category, posts } = Astro.props;
+---
+<Layout title={category}>
+  <a href="/" class="back-link">← 返回首页</a>
+  <h1>{category}</h1>
+  <ul class="post-list">
+    {posts.map((post) => (
+      <li>
+        <a href={`/posts/${post.id}/`}>{post.data.title}</a>
+        <span class="post-date">— {post.data.pubDate.toLocaleDateString()}</span>
+      </li>
+    ))}
+  </ul>
+</Layout>
