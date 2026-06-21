@@ -1,7 +1,6 @@
 ---
 import '../styles/global.css';
-
-const { title = '我的博客' } = Astro.props;
+const { title = 'myblog' } = Astro.props;
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -12,7 +11,7 @@ const { title = '我的博客' } = Astro.props;
 	</head>
 	<body>
 		<header>
-			<a href="/" class="site-title">Spes's BLOG</a>
+			<a href="/" class="site-title">Home</a>
 		</header>
 		<slot />
 	</body>

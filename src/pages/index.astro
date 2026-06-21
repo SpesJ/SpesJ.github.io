@@ -17,6 +17,12 @@ const sortedPosts = allPosts.sort(
       <li>
         <a href={`/posts/${post.id}/`}>{post.data.title}</a>
         <span class="post-date">— {post.data.pubDate.toLocaleDateString()}</span>
+        {post.data.category && <span class="post-category">{post.data.category}</span>}
+        {post.data.tags.length > 0 && (
+          <span class="post-tags">
+            {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+          </span>
+        )}
       </li>
     ))}
   </ul>
@@ -29,9 +35,6 @@ const sortedPosts = allPosts.sort(
   }
   .post-list li {
     margin-bottom: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     border-bottom: 1px dashed #e0e0e0;
     padding-bottom: 0.5rem;
   }
@@ -46,5 +49,24 @@ const sortedPosts = allPosts.sort(
   .post-date {
     color: #888;
     font-size: 0.9rem;
+  }
+  .post-category {
+    margin-left: 0.5rem;
+    background: #eef2ff;
+    color: #4338ca;
+    padding: 0.1rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+  .post-tags {
+    margin-left: 0.5rem;
+  }
+  .tag {
+    color: #888;
+    font-size: 0.8rem;
+    margin-right: 0.3rem;
+  }
+  .tag::before {
+    content: "#";
   }
 </style>
