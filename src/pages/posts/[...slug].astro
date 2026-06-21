@@ -5,82 +5,53 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
-  return posts.map((post) => ({
+  return posts.map(post => ({
     params: { slug: post.id },
     props: { post },
   }));
 }
 
 const { post } = Astro.props;
+// 使用 Astro 最新推荐的 render 方法解析 Markdown
 const { Content } = await render(post);
 ---
+
 <Layout title={post.data.title}>
   <Sidebar slot="sidebar" />
-
-  <a href="/" class="text-sm text-zinc-500 hover:text-blue-600 mb-6 inline-block">← 返回首页</a>
-
-  <article class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-10 shadow-sm">
-    <header class="text-center mb-8 pb-6 border-b border-zinc-100 dark:border-zinc-800">
-      <h1 class="text-3xl font-bold mb-2">{post.data.title}</h1>
-      <time class="text-sm text-zinc-400">{post.data.pubDate.toLocaleDateString('zh-CN')}</time>
-      {(post.data.category || post.data.tags.length > 0) && (
-        <div class="mt-3">
-          {post.data.category && <span class="inline-block mr-2 bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded text-xs">{post.data.category}</span>}
-          {post.data.tags.length > 0 && (
-            <span>
-              {post.data.tags.map((tag) => <span class="tag">{tag}</span>)}
+  
+  <div class="flex-1 w-full mx-auto max-w-3xl">
+    <header class="text-center mb-10 pb-6 border-b border-zinc-200 dark:border-zinc-800">
+      <h1 class="text-3xl font-black tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-4xl leading-tight">
+        {post.data.title}
+      </h1>
+      
+      <div class="flex items-center justify-center gap-3 mt-4 text-xs text-zinc-400 dark:text-zinc-500 font-medium">
+        <time>
+          {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </time>
+        
+        {post.data.category && (
+          <>
+            <span class="text-zinc-300 dark:text-zinc-700">•</span>
+            <span class="font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+              {post.data.category}
             </span>
-          )}
-        </div>
-      )}
+          </>
+        )}
+        
+        {post.data.subcategory && (
+          <>
+            <span class="text-zinc-300 dark:text-zinc-700">/</span>
+            <span class="text-zinc-500 dark:text-zinc-400">
+              {post.data.subcategory}
+            </span>
+          </>
+        )}
+      </div>
     </header>
 
-    <div class="post-content">
+    <article class="prose prose-zinc dark:prose-invert max-w-none prose-headings:scroll-mt-20">
       <Content />
-    </div>
-  </article>
+    </article>
+  </div>
 </Layout>
-
-<style>
-  .post-content :global(p) {
-    line-height: 1.8;
-    color: #444;
-    margin-bottom: 1.2rem;
-  }
-  .post-content :global(h2) {
-    color: #222;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 0.5rem;
-  }
-  .post-content :global(blockquote) {
-    border-left: 4px solid #007bff;
-    background-color: #f8f9fa;
-    margin: 1.5rem 0;
-    padding: 1rem 1.5rem;
-    color: #555;
-    font-style: italic;
-    border-radius: 0 8px 8px 0;
-  }
-  .post-content :global(code) {
-    background-color: #f1f3f5;
-    color: #e83e8c;
-    padding: 0.2em 0.4em;
-    border-radius: 4px;
-    font-size: 0.9em;
-  }
-  .post-content :global(pre) {
-    background-color: #282c34;
-    color: #abb2bf;
-    padding: 1.2rem;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 1.5rem 0;
-  }
-  .post-content :global(pre code) {
-    background-color: transparent;
-    color: inherit;
-    padding: 0;
-  }
-</style>

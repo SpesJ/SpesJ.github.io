@@ -5,42 +5,88 @@ import { getCollection } from 'astro:content';
 import { categories } from '../../../data/categories';
 
 export async function getStaticPaths() {
-  const allPosts = await getCollection('posts');
+  const allPosts = await getCollection('posts', ({ data }) => !data.draft);
   const paths = [];
 
   for (const cat of categories) {
     for (const sub of cat.subcategories) {
-      const posts = allPosts
-        .filter((p) => p.data.category === cat.slug && p.data.subcategory === sub.slug)
-        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+      const posts = allPosts.filter(
+        post => post.data.category === cat.slug && post.data.subcategory === sub.slug
+      );
       paths.push({
         params: { slug: cat.slug, sub: sub.slug },
-        props: { categoryLabel: cat.label, subLabel: sub.label, posts },
+        props: { label: sub.label, posts }
       });
     }
   }
-
   return paths;
 }
 
-const { categoryLabel, subLabel, posts } = Astro.props;
+const { label, posts } = Astro.props;
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
-<Layout title={`${categoryLabel} · ${subLabel}`}>
+
+<Layout title={`子分类: ${label}`}>
   <Sidebar slot="sidebar" />
-  <p class="text-sm text-zinc-400 mb-1">{categoryLabel}</p>
-  <h2 class="text-3xl font-bold mb-8">{subLabel}</h2>
-  {posts.length === 0 ? (
-    <p class="text-zinc-500">这个分类下还没有文章。</p>
-  ) : (
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {posts.map((post) => (
-        <article class="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-7 shadow-sm hover:shadow-md transition-shadow">
-          <a href={`/posts/${post.id}/`}>
-            <h3 class="text-2xl font-semibold hover:text-blue-600">{post.data.title}</h3>
-            <p class="text-sm text-zinc-500 mt-2">{post.data.pubDate.toLocaleDateString('zh-CN')}</p>
-          </a>
-        </article>
-      ))}
+  
+  <div class="flex-1 w-full mx-auto">
+    <div class="text-center w-full mb-8 pb-4 border-b border-zinc-200 dark:border-zinc-800">
+      <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+        #{label}
+      </h2>
+      <p class="text-xs font-medium text-zinc-400 dark:text-zinc-500 mt-1.5">
+        该子分类共 {sortedPosts.length} 篇
+      </p>
     </div>
-  )}
+
+    {sortedPosts.length === 0 ? (
+      <div class="text-center py-20 text-zinc-400 dark:text-zinc-600 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/10">
+        <p class="text-sm">该分类下暂无文章</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {sortedPosts.map((post) => (
+          <article class="group relative flex flex-col justify-between bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-500/50 hover:shadow-md">
+            <div>
+              <div class="flex items-center gap-2 mb-3.5">
+                {post.data.category && (
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/30 px-2 py-0.5 rounded-md">
+                    {post.data.category}
+                  </span>
+                )}
+                {post.data.subcategory && (
+                  <span class="text-[11px] font-medium text-zinc-400 dark:text-zinc-500">
+                    / {post.data.subcategory}
+                  </span>
+                )}
+              </div>
+              
+              <h3 class="text-xl font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2 leading-snug">
+                <a href={`/posts/${post.id}/`}>
+                  <span class="absolute inset-0 rounded-2xl z-10" />
+                  {post.data.title}
+                </a>
+              </h3>
+            </div>
+
+            <div class="mt-6 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/60 pt-4 z-20">
+              <time class="text-xs text-zinc-400 dark:text-zinc-500">
+                {post.data.pubDate.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+              
+              {post.data.tags && post.data.tags.length > 0 && (
+                <div class="flex gap-1.5 overflow-hidden max-w-[60%]">
+                  {post.data.tags.slice(0, 2).map(tag => (
+                    <span class="text-[11px] text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md truncate">
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
 </Layout>

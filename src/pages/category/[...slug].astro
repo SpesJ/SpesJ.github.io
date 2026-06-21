@@ -1,22 +1,45 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Sidebar from '../components/Sidebar.astro';
+import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Sidebar.astro';
 import { getCollection } from 'astro:content';
+import { categories } from '../../data/categories';
 
-// 获取所有非草稿文章
-const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+export async function getStaticPaths() {
+  const allPosts = await getCollection('posts', ({ data }) => !data.draft);
+  const paths = [];
 
-// 按发布时间倒序排列
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  for (const cat of categories) {
+    const catPosts = allPosts.filter(post => post.data.category === cat.slug);
+    paths.push({
+      params: { slug: cat.slug },
+      props: { label: cat.label, posts: catPosts }
+    });
+
+    for (const sub of cat.subcategories) {
+      const subPosts = allPosts.filter(
+        post => post.data.category === cat.slug && post.data.subcategory === sub.slug
+      );
+      paths.push({
+        params: { slug: `${cat.slug}/${sub.slug}` },
+        props: { label: sub.label, posts: subPosts }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { label, posts } = Astro.props;
+const sortedPosts = posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 ---
 
-<Layout title="Spes's BLOG">
+<Layout title={`分类: ${label}`}>
   <Sidebar slot="sidebar" />
   
   <div class="flex-1 w-full mx-auto">
     <div class="text-center mb-8 pb-4 border-b border-zinc-200 dark:border-zinc-800">
       <h2 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
-        最新文章
+        #{label}
       </h2>
       <p class="text-xs font-medium text-zinc-400 dark:text-zinc-500 mt-1.5">
         共 {sortedPosts.length} 篇
@@ -25,10 +48,9 @@ const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pu
 
     {sortedPosts.length === 0 ? (
       <div class="text-center py-20 text-zinc-400 dark:text-zinc-600 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-3xl bg-zinc-50/50 dark:bg-zinc-900/10">
-        <p class="text-sm">暂无公开文章</p>
+        <p class="text-sm">该分类下暂无文章</p>
       </div>
     ) : (
-      // 两列网格布局
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         {sortedPosts.map((post) => (
           <article class="group relative flex flex-col justify-between bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-500/50 hover:shadow-md">
